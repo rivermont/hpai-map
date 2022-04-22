@@ -5,6 +5,23 @@ import csv
 import json
 
 
+def clean(geo, btype, data):
+    '''Strips geojson input of unneeded properties and adds new properties looked up in data.'''
+    out = {"type": "Feature", "geometry": geo["geometry"], "name": geo["properties"]["NAMELSAD"], "properties": {
+           "STATE_NAME": geo["properties"]["STATE_NAME"],
+           "NAME": geo["properties"]["NAME"]
+    }}
+    
+    out['properties']['description'] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['description']
+    out['properties']['num_report_' + btype] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['num_report_' + btype]
+    if btype == 'cap':
+        out['properties']['num_birds_' + btype] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['num_birds_' + btype]
+    
+    return out
+
+
+## DOWNLOAD FROM USDA ##
+
 overwrite = False  # for overwriting data files
 
 if overwrite:
@@ -20,6 +37,8 @@ if overwrite:
     with open("./data/hpai-wild-birds.csv", "w+") as f:
         f.write(wild)
 
+
+## PROCESS COMMERCIAL FLOCK DATA ##
 
 data = {}
 
@@ -47,31 +66,12 @@ with open("./data/hpai-commercial-backyard-flocks.csv", "r") as f:
 
 
 
-
-
-def clean(geo, btype, data):
-    '''Strips geojson input of unneeded properties and adds new properties looked up in data.'''
-    out = {"type": "Feature", "geometry": geo["geometry"], "name": geo["properties"]["NAMELSAD"], "properties": {
-           "STATE_NAME": geo["properties"]["STATE_NAME"],
-           "NAME": geo["properties"]["NAME"]
-    }}
-    
-    out['properties']['description'] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['description']
-    out['properties']['num_report_' + btype] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['num_report_' + btype]
-    if btype == 'cap':
-        out['properties']['num_birds_' + btype] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['num_birds_' + btype]
-    
-    return out
-
-
-###
-
-
 # create set of (state, county) pairs
 x = set()
 for s in data:
     for c in data[s]['counties']:
         x.add((s, c))
+        # print(data[s]['counties'][c]['num_report_cap'])  # data for histogram
 
 
 out = {"type": "FeatureCollection", "name": "HPAI Counties CAPTIVE", "features": [],
@@ -90,9 +90,7 @@ with open("./hpai_counties_cap.geojson", "a", encoding="utf-8") as f:
     json.dump(out, f)
 
 
-############
-
-
+## PROCESS WILD BIRD DATA ##
 
 data = {}
 
@@ -122,6 +120,7 @@ x = set()
 for s in data:
     for c in data[s]['counties']:
         x.add((s, c))
+        # print(data[s]['counties'][c]['num_report_wild'])  # data for histogram
 
 
 out = {"type": "FeatureCollection", "name": "HPAI Counties WILD", "features": [],
@@ -138,6 +137,4 @@ with open("./data/cb_2020_us_county_20m.geojson", 'r') as f:
 
 with open("./hpai_counties_wild.geojson", "a", encoding="utf-8") as f:
     json.dump(out, f)
-
-# For state in geojson, if state in list, add to file
 
