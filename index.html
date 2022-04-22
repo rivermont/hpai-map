@@ -56,7 +56,7 @@
             
             <div id="legend">legend and controls here (green scale is captive bird populations, orange scale is wild bird reports)</div>
             
-            <small id="creds">Basemap style &copy; CartoDB | Basemap data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | County data: <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html">U.S. Census Bureau, 2020</a> | Map by <a href="https://rivermont.xyz">Will Bennett</a>, source code available <a href="https://github.com/rivermont/hpai-map">on GitHub</a>.</small>
+            <small id="creds">Map by <a href="https://rivermont.xyz">Will Bennett</a>, source code available <a href="https://github.com/rivermont/hpai-map">on GitHub</a>.</small>
         </div>
     </div>
     <div id="map"></div>
@@ -71,7 +71,9 @@
             detectRetina: true
         });
         
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png').addTo(lemap);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            attribution: 'Basemap style &copy; CartoDB | Basemap data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> | County shapes: <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html">U.S. Census Bureau, 2020</a> | Avian Flu data: <a href="https://www.aphis.usda.gov/aphis/ourfocus/animalhealth/animal-disease-information/avian/avian-influenza/hpai-2022/">USDA</a>'
+        }).addTo(lemap);
         
         L.control.scale({position: 'bottomleft'}).addTo(lemap);
         
@@ -79,11 +81,10 @@
         // Process captive bird data
         var counties_captive = null;
         
-        colorsc = chroma.scale('YlGn').colors(15);
+        colorsc = chroma.scale('YlGn').colors(11);
         
         function colorc(reports) {
-            return colorsc[reports+4];
-            // TODO: update with actual classes
+            return colorsc[reports+2];
         }
         
         function stylec(feature) {
@@ -107,11 +108,21 @@
         // process wild bird data
         var counties_wild = null;
         
-        colorsw = chroma.scale('Oranges').colors(95);
+        colorsw = chroma.scale('Oranges').colors(7);
         
         function colorw(reports) {
-            return colorsw[reports+15];
-            // TODO: update with actual classes
+            if ( reports == 1 ) { return colorsw[1] }
+            if ( reports > 1 && reports <= 5 ) { return colorsw[2] }
+            if ( reports > 5 && reports <= 10 ) { return colorsw[3] }
+            if ( reports > 10 && reports <= 25 ) { return colorsw[4] }
+            if ( reports > 25 && reports <= 50 ) { return colorsw[5] }
+            else { return colorsw[5] }
+            // 1
+            // 2-5
+            // 5-10
+            // 10-25
+            // 25-50
+            // 50+
         }
         
         function stylew(feature) {
