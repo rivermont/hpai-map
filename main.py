@@ -86,7 +86,7 @@ with open("./data/cb_2020_us_county_20m.geojson", 'r') as f:
             out['features'].append(clean(county, 'cap', data))
     print(x)  # TODO: fix these counties not being found
 
-with open("./hpai_counties_cap.geojson", "a", encoding="utf-8") as f:
+with open("./hpai_counties_cap.geojson", "w", encoding="utf-8") as f:
     json.dump(out, f)
 
 
@@ -135,6 +135,6 @@ with open("./data/cb_2020_us_county_20m.geojson", 'r') as f:
             out['features'].append(clean(county, 'wild', data))
     print(x)  # TODO: fix these counties not being found
 
-with open("./hpai_counties_wild.geojson", "a", encoding="utf-8") as f:
+with open("./hpai_counties_wild.geojson", "w", encoding="utf-8") as f:
     json.dump(out, f)
 
