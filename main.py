@@ -4,6 +4,10 @@ import requests
 import csv
 import json
 
+from time import strftime
+today = strftime("%A, %d %b %Y")
+settings = {"date": today}
+
 
 def clean(geo, btype, data):
     '''Strips geojson input of unneeded properties and adds new properties looked up in data.'''
@@ -25,12 +29,9 @@ def clean(geo, btype, data):
 overwrite = False  # for overwriting data files
 
 if overwrite:
-    # get data from usda csvs
     commercial = requests.get("https://www.aphis.usda.gov/animal_health/data-csv/hpai-commercial-backyard-flocks.csv").text
     wild = requests.get("https://www.aphis.usda.gov/animal_health/data-csv/hpai-wild-birds.csv").text
 
-    # check whether files exist
-    # save files
     with open("./data/hpai-commercial-backyard-flocks.csv", "w+") as f:
         f.write(commercial)
 
@@ -137,4 +138,12 @@ with open("./data/cb_2020_us_county_20m.geojson", 'r') as f:
 
 with open("./hpai_counties_wild.geojson", "w", encoding="utf-8") as f:
     json.dump(out, f)
+
+
+## Process data for settings
+
+# TODO: get distribution data and calculate classes
+
+with open("./settings.json", "w", encoding="utf-8") as f:
+    json.dump(settings, f)
 

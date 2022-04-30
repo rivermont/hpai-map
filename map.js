@@ -41,7 +41,7 @@ counties_captive = L.geoJson.ajax("./hpai_counties_cap.geojson", {
     },
     style: stylec
 }).addTo(map);
-    
+
 
 // process wild bird data
 var counties_wild = null;
