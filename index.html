@@ -2,6 +2,7 @@
 <html lang="en_US">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Live Avian Flu Outbreak 2022 Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.0/dist/leaflet.css"/>
     <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">-->
@@ -33,24 +34,98 @@
         padding: 0.5em;
     }
     #legend {
-        padding: 0.5em;
         width: 100%;
+        background: #f5f5f5;
+        box-shadow: inset 0px 0px 5px 2px #bfbfbf;
+        padding: 0.7em 0 0.7em 0;
     }
     #creds {
         position: absolute;
         bottom: 0;
         margin-bottom: 0.5em;
+        text-align: center;
+        width: 100%;
     }
     
     #legend i {
-        width: 18px;
-        height: 16px;
+        width: 17px;
+        height: 14px;
+        opacity: 0.9;
+        border-style: solid;
+        border-width: 1px;
+    }
+    #legendw i {
+        float: right;
+        margin-left: 8px;
+    }
+    #legendc i {
         float: left;
         margin-right: 8px;
-        opacity: 0.7;
     }
-    // TODO: style switches
     </style>
+    <style>
+    .switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    margin: 0.2em 0 0.3em 0;
+    }
+    
+    .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+    }
+
+    .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #9b9b9b;
+    -webkit-transition: .4s;
+    transition: .4s;
+    }
+
+    .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    }
+
+    input:checked + .slider {
+    background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+    -webkit-transform: translateX(14px);
+    -ms-transform: translateX(14px);
+    transform: translateX(14px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+    border-radius: 22px;
+    }
+
+    .slider.round:before {
+    border-radius: 50%;
+    }
+    </style>
+    
     <script src="https://unpkg.com/leaflet@1.7.0/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -58,23 +133,50 @@
 </head>
 <body>
     <div id="content">
+        <small id="creds">Map by <a href="https://rivermont.xyz">Will Bennett</a>, source code available <a href="https://github.com/rivermont/hpai-map">on GitHub</a>.</small>
         <div id="wrapper">
         <h2>Live Avian Flu (HPAI) 2022 Outbreak Map</h2>
         <h3 id="date"></h3>
             <p>This map highlights counties with reported cases of avian influenza (bird flu) in the United States. The outbreak in 2022 was first reported on January 13 in wild waterfowl killed by hunters.
             <br>(<a href="https://www.npr.org/2022/04/06/1091061758/bird-flu-outbreak" target="_blank">NPR</a>)</p>
-            
-            <p><input type="checkbox" id="switch-captive" checked />Toggle captive bird reports</p>
-            <p><input type="checkbox" id="switch-wild" checked />Toggle wild bird reports</p>
+
             <!--<p><input type="checkbox" id="switch-btype" />Toggle report type shown.</p>
             <p><input type="checkbox" id="switch-numtype" />Toggle type of number shown.</p>-->
             
-            <div id="legend">
-                <div id="legendw" style="float: left;"></div>
-                <div id="legendc" style="float: right; padding-right: 0.5em;"></div>
-            </div>
+            <br>
+            <table style="width: 100%;" id="legend">
+                <tr>
+                    <th align="right" style="padding-right: 10px;">Wild Bird Reports</th>
+                    <th align="left" style="padding-left: 10px;">Captive Bird Reports</th>
+                </tr>
+                
+                <tr>
+                    <td align="right" style="padding-right: 10px;">
+                    <label class="switch">
+                        <input type="checkbox" id="switch-wild" checked>
+                        <span class="slider"></span>
+                        </label>
+                    </td>
+                    <td align="left" style="padding-left: 10px;">
+                        <label class="switch">
+                        <input type="checkbox" id="switch-captive" checked>
+                        <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>
             
-            <small id="creds">Map by <a href="https://rivermont.xyz">Will Bennett</a>, source code available <a href="https://github.com/rivermont/hpai-map">on GitHub</a>.</small>
+                <tr>
+                    <td style="padding-right: 10px;" align="right">
+                    <div id="legendw"></div>
+                    </td>
+                    
+                    <td style="padding-left: 10px;" align="left">
+                    <div id="legendc"></div>
+                    </td>
+                </tr>
+            </table>
+            <br>
+                
         </div>
     </div>
     
@@ -160,18 +262,20 @@
         
         
         // create legend
-        var legend = ['Wild bird reports:'];
+        //var legend = ['Wild bird reports:'];
+        var legend = [];
         
         for (var i = 0; i < colorsw.length - 3; i++) {
-            legend.push('<i style="background:' + colorsw[i] + '"></i>' + gradesw1[i] + ' - ' + gradesw2[i]);
+            legend.push(gradesw1[i] + ' - ' + gradesw2[i] + ' <i style="background:' + colorsw[i] + '"></i>');
         }
         
-        legend.push('<i style="background:' + colorsw[gradesw1.length - 1] + '"></i>' + gradesw1[gradesw1.length - 1] + ' +');
+        legend.push(gradesw1[gradesw1.length - 1] + ' +' + ' <i style="background:' + colorsw[gradesw1.length - 1] + '"></i>');
         
         $("#legendw").html(legend.join('<br>'));
         
         
-        var legend = ['Captive bird reports:'];
+        //var legend = ['Captive bird reports:'];
+        var legend = [];
         
         for (var i = 2; i < colorsc.length - 1; i++) {
             legend.push('<i style="background:' + colorsc[i] + '"></i>' + gradesc[i]);
@@ -190,13 +294,11 @@
     /*
     $('#switch-btype').change(function(){
         if(this.checked) {
-            console.log("Displaying captive reports.");
             lemap.removeLayer(counties_captive);
             lemap.removeLayer(counties_wild);
             lemap.addLayer(counties_captive);
         }
         else {
-            console.log("Displaying wild reports.");
             lemap.removeLayer(counties_wild);
             lemap.removeLayer(counties_captive);
             lemap.addLayer(counties_wild);
