@@ -77,7 +77,7 @@ counties_wild = L.geoJson.ajax("./hpai_counties_wild.geojson", {
 }).addTo(map);
 
 
-map.fitBounds(counties_captive.getBounds());  // zoom to data bounds
+// map.fitBounds(counties_captive.getBounds());  // zoom to data bounds TODO: wait for geojson to render before calling this
 
 
 // create legend
