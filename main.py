@@ -13,7 +13,8 @@ def clean(geo, btype, data):
     '''Strips geojson input of unneeded properties and adds new properties looked up in data.'''
     out = {"type": "Feature", "geometry": geo["geometry"], "name": geo["properties"]["NAMELSAD"], "properties": {
            "STATE_NAME": geo["properties"]["STATE_NAME"],
-           "NAME": geo["properties"]["NAME"]
+           "NAME": geo["properties"]["NAME"],
+           "STUSPS": geo["properties"]["STUSPS"]
     }}
     
     out['properties']['description'] = data[out['properties']['STATE_NAME']]['counties'][out['properties']['NAME']]['description']

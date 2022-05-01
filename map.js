@@ -37,7 +37,7 @@ function stylec(feature) {
 
 counties_captive = L.geoJson.ajax("./hpai_counties_cap.geojson", {
     onEachFeature: function (feature, layer) {
-        layer.bindPopup(feature.properties.description);
+        layer.bindPopup('<b>' + feature.name + ', ' + feature.properties.STUSPS + '</b><br>' + feature.properties.description);
     },
     style: stylec
 }).addTo(map);
@@ -71,12 +71,13 @@ function stylew(feature) {
 
 counties_wild = L.geoJson.ajax("./hpai_counties_wild.geojson", {
     onEachFeature: function (feature, layer) {
-        layer.bindPopup(feature.properties.description);
+        layer.bindPopup('<b>' + feature.name + ', ' + feature.properties.STUSPS + '</b><br>' + feature.properties.description);
     },
     style: stylew
 }).addTo(map);
 
-// map.fitBounds(counties_captive.getBounds());  // zoom to data bounds
+
+map.fitBounds(counties_captive.getBounds());  // zoom to data bounds
 
 
 // create legend
