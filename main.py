@@ -26,7 +26,7 @@ def clean(geo, btype, data):
 
 ## DOWNLOAD FROM USDA ##
 
-overwrite = False  # for overwriting data files
+overwrite = True  # for overwriting data files
 
 if overwrite:
     commercial = requests.get("https://www.aphis.usda.gov/animal_health/data-csv/hpai-commercial-backyard-flocks.csv").text

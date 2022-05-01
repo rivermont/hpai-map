@@ -13,12 +13,24 @@
 </head>
 <body>
     <div id="content">
-        <small id="creds">Map by <a href="https://rivermont.xyz">Will Bennett</a>, source code available <a href="https://github.com/rivermont/hpai-map">on GitHub</a>.</small>
         <div id="wrapper">
-        <h2>Live Avian Flu (HPAI) 2022 Outbreak Map</h2>
-        <h4 id="date"></h4>
-            <p>This map highlights counties with reported cases of avian influenza (bird flu) in the United States. The outbreak in 2022 was first reported on January 13 in wild waterfowl killed by hunters.
-            <br>(<a href="https://www.npr.org/2022/04/06/1091061758/bird-flu-outbreak" target="_blank">NPR</a>)</p>
+            <h2>Live Avian Flu (HPAI) 2022 Outbreak Map</h2>
+            <h4 id="date">Last updated:</h4>
+            <script>
+            fetch('./settings.json')
+                .then(response => response.json())
+                .then(json => $("#date").html('Last updated: ' + json.date))
+            </script>
+            
+            <p>This map highlights counties with reported cases of avian influenza (bird flu) in the United States. The outbreak in 2022 was first reported on January 13 in wild waterfowl killed by hunters.</p>
+            <p>Reports from wild birds are shown in orange. Reports from captive birds are shown in green. Captive reports come from poultry farms and backyard flocks. Wild birds can be infected with HPAI and carry the disease to new areas when migrating, potentially exposing domestic poultry to the virus.</p>
+            <br>
+            <p><b>Sources:</b>
+                <ul>
+                <li><a href="https://www.npr.org/2022/04/06/1091061758/bird-flu-outbreak" target="_blank">What we know about the deadliest U.S. bird flu outbreak in 7 years</a>&mdash;NPR</li>
+                <li><a href="https://www.aphis.usda.gov/aphis/ourfocus/animalhealth/animal-disease-information/avian/avian-influenza/2022-hpai" target="_blank">2022 Detections of Highly Pathogenic Avian Influenza</a>&mdash;USDA
+                </ul>
+            </p>
 
             <!--<p><input type="checkbox" id="switch-btype" />Toggle report type shown.</p>
             <p><input type="checkbox" id="switch-numtype" />Toggle type of number shown.</p>-->
@@ -56,18 +68,13 @@
                 </tr>
             </table>
             <br>
-                
         </div>
+       <small id="creds">Map by <a href="https://rivermont.xyz">Will Bennett</a>, source code available <a href="https://github.com/rivermont/hpai-map">on GitHub</a>.</small>
     </div>
     
     <div id="map"></div>
     <script src="./map.js"></script>
     
-    <script>
-    fetch('./settings.json')
-        .then(response => response.json())
-        .then(json => $("#date").html('Last updated: ' + json.date))
-    </script>
     <script>
     // funtionality for layer toggles
     

@@ -18,7 +18,7 @@ html, body {
     top: 0;
     right: 0;
 }
-h2, h3 {
+h2, h4 {
     text-align: center;
 }
 #wrapper {
@@ -30,6 +30,9 @@ h2, h3 {
     margin-bottom: 0.5em;
     text-align: center;
     width: 100%;
+}
+ul {
+    font-size: 85%;
 }
 
 /* Legend styling */
